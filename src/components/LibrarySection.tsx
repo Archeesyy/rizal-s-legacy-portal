@@ -67,6 +67,96 @@ const LibrarySection = () => {
           </p>
         </div>
 
+        {/* Mi Último Adiós Spotlight */}
+        <div className="max-w-6xl mx-auto mb-20 bg-card rounded-lg shadow-2xl overflow-hidden border border-border">
+          <div className="bg-primary text-primary-foreground p-8 text-center">
+            <h3 className="font-playfair text-4xl font-bold mb-3 text-accent">
+              Mi Último Adiós
+            </h3>
+            <p className="font-lato text-lg opacity-90">
+              Rizal's Final Poem — December 29, 1896
+            </p>
+          </div>
+          
+          {/* Audio Player */}
+          <div className="bg-muted p-6 flex justify-center">
+            <audio controls className="w-full max-w-md">
+              <source src="/audio/mi-ultimo-adios.mp3" type="audio/mpeg" />
+              Your browser does not support the audio element.
+            </audio>
+          </div>
+
+          {/* Split Column Text */}
+          <div className="grid md:grid-cols-2 gap-8 p-8">
+            {/* Spanish Text */}
+            <div className="space-y-4">
+              <h4 className="font-playfair text-2xl font-bold text-primary mb-4 text-center">
+                Español (Original)
+              </h4>
+              <div className="font-lato text-sm leading-relaxed text-foreground space-y-3 h-[500px] overflow-y-auto pr-4 custom-scrollbar">
+                <p className="italic">
+                  Adiós, Patria adorada, región del sol querida,<br />
+                  Perla del Mar de Oriente, nuestro perdido Edén,<br />
+                  A darte voy, alegre, la triste mustia vida;<br />
+                  Y fuera más brillante, más fresca, más florida,<br />
+                  También por tí la diera, la diera por tu bien.
+                </p>
+                <p className="italic">
+                  En campos de batalla, luchando con delirio,<br />
+                  Otros te dan sus vidas sin dudas, sin pesar;<br />
+                  El sitio nada importa, ciprés, laurel o lirio,<br />
+                  Cadalso o campo abierto, combate o cruel martirio,<br />
+                  Lo mismo es si lo piden la patria y el hogar.
+                </p>
+                <p className="italic">
+                  Yo muero cuando veo que el cielo se colora<br />
+                  Y al fin anuncia el día tras lóbrego capuz;<br />
+                  Si grana necesitas para teñir tu aurora,<br />
+                  Vierte la sangre mía, derrámala en buen hora<br />
+                  Y dórela un reflejo de su naciente luz.
+                </p>
+                <p className="text-muted-foreground text-xs mt-4 text-center">
+                  [Excerpt - First three stanzas of fourteen]
+                </p>
+              </div>
+            </div>
+
+            {/* English Translation */}
+            <div className="space-y-4">
+              <h4 className="font-playfair text-2xl font-bold text-primary mb-4 text-center">
+                English Translation
+              </h4>
+              <div className="font-lato text-sm leading-relaxed text-foreground space-y-3 h-[500px] overflow-y-auto pr-4 custom-scrollbar">
+                <p>
+                  Farewell, dear Fatherland, clime of the sun caress'd,<br />
+                  Pearl of the Orient seas, our Eden lost!<br />
+                  Gladly now I go to give thee this faded life's best,<br />
+                  And were it brighter, fresher, or more blest,<br />
+                  Still would I give it thee, nor count the cost.
+                </p>
+                <p>
+                  On the field of battle, 'mid the frenzy of fight,<br />
+                  Others have given their lives, without doubt or heed;<br />
+                  The place matters not—cypress or laurel or lily white,<br />
+                  Scaffold or open plain, combat or martyrdom's plight,<br />
+                  'Tis ever the same, to serve our home and country's need.
+                </p>
+                <p>
+                  I die just when I see the dawn break,<br />
+                  Through the gloom of night, to herald the day;<br />
+                  And if color is lacking my blood thou shalt take,<br />
+                  Pour'd out at need for thy dear sake,<br />
+                  To dye with its crimson the waking ray.
+                </p>
+                <p className="text-muted-foreground text-xs mt-4 text-center">
+                  [Translated by Charles Derbyshire]
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Book Flip Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
           {books.map((book, index) => (
             <div

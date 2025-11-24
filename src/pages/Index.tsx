@@ -2,6 +2,9 @@ import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
 import TimelineSection from "@/components/TimelineSection";
 import LibrarySection from "@/components/LibrarySection";
+import WomenSection from "@/components/WomenSection";
+import MapSection from "@/components/MapSection";
+import GallerySection from "@/components/GallerySection";
 import TravelerSection from "@/components/TravelerSection";
 import QuizSection from "@/components/QuizSection";
 
@@ -13,6 +16,9 @@ const Index = () => {
         <HeroSection />
         <TimelineSection />
         <LibrarySection />
+        <WomenSection />
+        <MapSection />
+        <GallerySection />
         <TravelerSection />
         <QuizSection />
       </main>
