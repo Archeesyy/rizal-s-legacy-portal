@@ -39,6 +39,20 @@ const events: TimelineEvent[] = [
       "His groundbreaking novel exposed the injustices of Spanish colonial rule in the Philippines. The title means 'Touch Me Not' and sparked the Philippine reform movement. Funded the printing himself through help from friends.",
   },
   {
+    year: "1890",
+    title: "Time in Brussels",
+    description: "Annotated Morga's Sucesos de las Islas Filipinas",
+    details:
+      "While in Brussels, Rizal worked on annotating Antonio de Morga's historical work 'Sucesos de las Islas Filipinas' (Events in the Philippine Islands). His scholarly annotations challenged Spanish colonial narratives and highlighted the rich pre-colonial Filipino civilization.",
+  },
+  {
+    year: "1892",
+    title: "La Liga Filipina Founded",
+    description: "Established a civic organization for reforms",
+    details:
+      "On July 3, 1892, Rizal founded La Liga Filipina in Manila, a progressive organization aimed at social reforms through peaceful means. It advocated for political representation, education, and unity among Filipinos. The organization was short-lived as Rizal was arrested days later.",
+  },
+  {
     year: "1892",
     title: "Exile to Dapitan",
     description: "Banished to Dapitan, Zamboanga del Norte",
