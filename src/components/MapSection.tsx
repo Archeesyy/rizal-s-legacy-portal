@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { MapPin } from "lucide-react";
 import { Card, CardContent } from "./ui/card";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 interface Location {
   id: number;
   name: string;
   country: string;
-  coordinates: { x: number; y: number };
+  coordinates: { lng: number; lat: number };
   period: string;
   description: string;
   significance: string;
@@ -17,7 +21,7 @@ const locations: Location[] = [
     id: 1,
     name: "Calamba, Laguna",
     country: "Philippines",
-    coordinates: { x: 85, y: 45 },
+    coordinates: { lng: 121.1535, lat: 14.2113 },
     period: "1861-1882, 1887-1888",
     description: "Birthplace and childhood home of José Rizal. This is where the young Pepe spent his formative years, nurtured by his mother Teodora Alonso who taught him to read and write.",
     significance:
@@ -27,7 +31,7 @@ const locations: Location[] = [
     id: 2,
     name: "Madrid",
     country: "Spain",
-    coordinates: { x: 35, y: 30 },
+    coordinates: { lng: -3.7038, lat: 40.4168 },
     period: "1882-1885",
     description: "Rizal studied medicine at Universidad Central de Madrid, immersing himself in European intellectual movements. He also studied painting, sculpture, and literature while developing his political consciousness.",
     significance:
@@ -37,7 +41,7 @@ const locations: Location[] = [
     id: 3,
     name: "Heidelberg",
     country: "Germany",
-    coordinates: { x: 42, y: 25 },
+    coordinates: { lng: 8.6821, lat: 49.3988 },
     period: "1886",
     description: "Specialized in ophthalmology under the tutelage of Dr. Otto Becker, one of Europe's leading eye specialists. His motivation was to cure his mother's deteriorating eyesight.",
     significance:
@@ -47,7 +51,7 @@ const locations: Location[] = [
     id: 4,
     name: "Brussels",
     country: "Belgium",
-    coordinates: { x: 40, y: 23 },
+    coordinates: { lng: 4.3517, lat: 50.8503 },
     period: "1890-1891",
     description: "In Brussels, Rizal lived a modest life while working on his scholarly annotation of Antonio de Morga's historical work. He also completed El Filibusterismo during this period.",
     significance:
@@ -57,7 +61,7 @@ const locations: Location[] = [
     id: 5,
     name: "Dapitan",
     country: "Philippines",
-    coordinates: { x: 87, y: 48 },
+    coordinates: { lng: 123.4181, lat: 8.6497 },
     period: "1892-1896",
     description: "Exiled to this remote town in Mindanao, Rizal transformed it into a model community. He practiced medicine, taught children, built infrastructure, and conducted scientific research.",
     significance:
@@ -67,7 +71,7 @@ const locations: Location[] = [
     id: 6,
     name: "Manila",
     country: "Philippines",
-    coordinates: { x: 86, y: 44 },
+    coordinates: { lng: 120.9842, lat: 14.5995 },
     period: "1892, 1896",
     description: "The capital city where Rizal founded La Liga Filipina and where his life journey ended. His execution at Bagumbayan (now Rizal Park) transformed him from reformist to martyr.",
     significance:
@@ -76,9 +80,71 @@ const locations: Location[] = [
 ];
 
 const MapSection = () => {
-  const [activeLocation, setActiveLocation] = useState<Location | null>(
-    locations[0]
-  );
+  const [activeLocation, setActiveLocation] = useState<Location | null>(locations[0]);
+  const [mapboxToken, setMapboxToken] = useState<string>("");
+  const [showTokenInput, setShowTokenInput] = useState(true);
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<mapboxgl.Map | null>(null);
+  const markers = useRef<mapboxgl.Marker[]>([]);
+
+  useEffect(() => {
+    if (!mapContainer.current || !mapboxToken || map.current) return;
+
+    mapboxgl.accessToken = mapboxToken;
+    
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/light-v11',
+      center: [30, 20],
+      zoom: 1.5,
+    });
+
+    map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+    // Add markers for each location
+    locations.forEach((location) => {
+      const el = document.createElement('div');
+      el.className = 'marker';
+      el.style.width = '30px';
+      el.style.height = '30px';
+      el.style.borderRadius = '50%';
+      el.style.backgroundColor = 'hsl(var(--accent))';
+      el.style.border = '3px solid white';
+      el.style.cursor = 'pointer';
+      el.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
+
+      const marker = new mapboxgl.Marker(el)
+        .setLngLat([location.coordinates.lng, location.coordinates.lat])
+        .addTo(map.current!);
+
+      el.addEventListener('click', () => {
+        setActiveLocation(location);
+        map.current?.flyTo({
+          center: [location.coordinates.lng, location.coordinates.lat],
+          zoom: 6,
+          duration: 2000,
+        });
+      });
+
+      markers.current.push(marker);
+    });
+
+    setShowTokenInput(false);
+
+    return () => {
+      markers.current.forEach(marker => marker.remove());
+      markers.current = [];
+      map.current?.remove();
+      map.current = null;
+    };
+  }, [mapboxToken]);
+
+  const handleTokenSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (mapboxToken.trim()) {
+      setShowTokenInput(false);
+    }
+  };
 
   return (
     <section id="map" className="py-24 bg-background">
@@ -98,84 +164,47 @@ const MapSection = () => {
           <div className="grid md:grid-cols-2 gap-12 items-start">
             {/* Left Column - Sticky Map */}
             <div className="md:sticky md:top-24">
-              <div className="relative bg-card rounded-lg shadow-xl overflow-hidden border border-border p-8">
-                <svg
-                  viewBox="0 0 100 60"
-                  className="w-full h-auto"
-                  style={{ minHeight: "500px" }}
-                >
-                  {/* Simplified World Map SVG */}
-                  <rect width="100" height="60" fill="hsl(var(--muted))" />
-                  
-                  {/* Continents (simplified shapes) */}
-                  <path
-                    d="M30 15 L35 15 L40 20 L45 18 L50 22 L48 28 L42 30 L35 28 L30 25 Z"
-                    fill="hsl(var(--primary))"
-                    opacity="0.3"
-                  />
-                  <path
-                    d="M80 35 L88 35 L90 42 L88 48 L82 50 L78 45 L80 40 Z"
-                    fill="hsl(var(--primary))"
-                    opacity="0.3"
-                  />
-
-                  {/* Location Markers */}
-                  {locations.map((location) => (
-                    <g key={location.id}>
-                      {/* Pulse Animation for Active Location */}
-                      {activeLocation?.id === location.id && (
-                        <circle
-                          cx={location.coordinates.x}
-                          cy={location.coordinates.y}
-                          r="2"
-                          fill="hsl(var(--accent))"
-                          opacity="0.3"
-                          className="animate-ping"
-                        />
-                      )}
-                      
-                      {/* Marker Pin */}
-                      <g
-                        transform={`translate(${location.coordinates.x}, ${location.coordinates.y})`}
-                        className="cursor-pointer transition-transform hover:scale-125"
-                        onClick={() => setActiveLocation(location)}
-                      >
-                        <circle
-                          r="1.5"
-                          fill={
-                            activeLocation?.id === location.id
-                              ? "hsl(var(--accent))"
-                              : "hsl(var(--primary))"
-                          }
-                          className="transition-colors"
-                        />
-                        <circle
-                          r="0.7"
-                          fill="white"
-                          opacity="0.8"
-                        />
-                      </g>
-                    </g>
-                  ))}
-                </svg>
-
-                {/* Location Labels */}
-                <div className="absolute inset-0 pointer-events-none">
-                  {locations.map((location) => (
-                    <div
-                      key={`label-${location.id}`}
-                      className="absolute text-xs font-lato font-semibold text-primary"
-                      style={{
-                        left: `${location.coordinates.x}%`,
-                        top: `${location.coordinates.y}%`,
-                        transform: "translate(-50%, -150%)",
-                      }}
-                    >
-                      {location.name}
+              {showTokenInput ? (
+                <Card className="bg-card border-border p-6">
+                  <form onSubmit={handleTokenSubmit} className="space-y-4">
+                    <div>
+                      <Label htmlFor="mapbox-token" className="font-lato text-foreground">
+                        Enter Your Mapbox Public Token
+                      </Label>
+                      <p className="text-sm text-muted-foreground mt-1 mb-3">
+                        Get your free token at{" "}
+                        <a 
+                          href="https://account.mapbox.com/access-tokens/" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-accent hover:underline"
+                        >
+                          mapbox.com
+                        </a>
+                      </p>
+                      <Input
+                        id="mapbox-token"
+                        type="text"
+                        value={mapboxToken}
+                        onChange={(e) => setMapboxToken(e.target.value)}
+                        placeholder="pk.eyJ1..."
+                        className="font-mono text-sm"
+                      />
                     </div>
-                  ))}
-                </div>
-              </div>
+                    <button
+                      type="submit"
+                      className="w-full bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-accent transition-colors font-lato"
+                    >
+                      Load Interactive Map
+                    </button>
+                  </form>
+                </Card>
+              ) : (
+                <div 
+                  ref={mapContainer} 
+                  className="w-full h-[500px] rounded-lg shadow-xl border border-border overflow-hidden"
+                />
+              )}
             </div>
 
             {/* Right Column - Scrolling Location Details */}
