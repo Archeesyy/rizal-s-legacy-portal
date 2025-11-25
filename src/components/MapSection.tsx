@@ -19,9 +19,9 @@ const locations: Location[] = [
     country: "Philippines",
     coordinates: { x: 85, y: 45 },
     period: "1861-1882, 1887-1888",
-    description: "Birthplace and childhood home of José Rizal",
+    description: "Birthplace and childhood home of José Rizal. This is where the young Pepe spent his formative years, nurtured by his mother Teodora Alonso who taught him to read and write.",
     significance:
-      "Where Rizal spent his formative years, learning from his mother and developing his love for the Philippines.",
+      "Where Rizal spent his formative years, learning from his mother and developing his love for the Philippines. His idyllic childhood in Calamba would later inspire many scenes in his novels.",
   },
   {
     id: 2,
@@ -29,9 +29,9 @@ const locations: Location[] = [
     country: "Spain",
     coordinates: { x: 35, y: 30 },
     period: "1882-1885",
-    description: "Studied medicine at Universidad Central de Madrid",
+    description: "Rizal studied medicine at Universidad Central de Madrid, immersing himself in European intellectual movements. He also studied painting, sculpture, and literature while developing his political consciousness.",
     significance:
-      "Completed his medical studies and began writing Noli Me Tangere. Witnessed European intellectual movements.",
+      "Completed his medical studies and began writing Noli Me Tangere. Witnessed European intellectual movements and became involved with Filipino expatriate reformist circles, shaping his vision for Philippine independence.",
   },
   {
     id: 3,
@@ -39,9 +39,9 @@ const locations: Location[] = [
     country: "Germany",
     coordinates: { x: 42, y: 25 },
     period: "1886",
-    description: "Specialized in ophthalmology",
+    description: "Specialized in ophthalmology under the tutelage of Dr. Otto Becker, one of Europe's leading eye specialists. His motivation was to cure his mother's deteriorating eyesight.",
     significance:
-      "Trained under the renowned ophthalmologist Dr. Otto Becker. Completed his eye specialization to help his mother.",
+      "Trained under the renowned ophthalmologist Dr. Otto Becker. Completed his eye specialization to help his mother. This period also saw him working intensively on completing Noli Me Tangere.",
   },
   {
     id: 4,
@@ -49,9 +49,9 @@ const locations: Location[] = [
     country: "Belgium",
     coordinates: { x: 40, y: 23 },
     period: "1890-1891",
-    description: "Annotated Morga's historical work",
+    description: "In Brussels, Rizal lived a modest life while working on his scholarly annotation of Antonio de Morga's historical work. He also completed El Filibusterismo during this period.",
     significance:
-      "Worked on annotating Sucesos de las Islas Filipinas, challenging Spanish colonial narratives about Philippine history.",
+      "Worked on annotating Sucesos de las Islas Filipinas, challenging Spanish colonial narratives about Philippine history. His annotations proved that Filipinos had a rich, sophisticated civilization before Spanish colonization.",
   },
   {
     id: 5,
@@ -59,9 +59,9 @@ const locations: Location[] = [
     country: "Philippines",
     coordinates: { x: 87, y: 48 },
     period: "1892-1896",
-    description: "Exiled to Mindanao",
+    description: "Exiled to this remote town in Mindanao, Rizal transformed it into a model community. He practiced medicine, taught children, built infrastructure, and conducted scientific research.",
     significance:
-      "Despite exile, established a school, practiced medicine, conducted scientific research, and improved the community.",
+      "Despite exile, established a school, practiced medicine, conducted scientific research, and improved the community. His successful eye surgeries, agricultural innovations, and civic projects demonstrated his commitment to uplifting Filipino society.",
   },
   {
     id: 6,
@@ -69,9 +69,9 @@ const locations: Location[] = [
     country: "Philippines",
     coordinates: { x: 86, y: 44 },
     period: "1892, 1896",
-    description: "Founded La Liga Filipina and site of execution",
+    description: "The capital city where Rizal founded La Liga Filipina and where his life journey ended. His execution at Bagumbayan (now Rizal Park) transformed him from reformist to martyr.",
     significance:
-      "Founded La Liga Filipina in 1892. Executed at Bagumbayan (Luneta) on December 30, 1896.",
+      "Founded La Liga Filipina in 1892. Executed at Bagumbayan (Luneta) on December 30, 1896. His martyrdom sparked the Philippine Revolution and made him the country's greatest national hero.",
   },
 ];
 
@@ -94,14 +94,15 @@ const MapSection = () => {
         </div>
 
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Interactive World Map */}
-            <div className="lg:col-span-2">
+          {/* Two Column Layout: Sticky Map + Scrolling Content */}
+          <div className="grid md:grid-cols-2 gap-12 items-start">
+            {/* Left Column - Sticky Map */}
+            <div className="md:sticky md:top-24">
               <div className="relative bg-card rounded-lg shadow-xl overflow-hidden border border-border p-8">
                 <svg
                   viewBox="0 0 100 60"
                   className="w-full h-auto"
-                  style={{ minHeight: "400px" }}
+                  style={{ minHeight: "500px" }}
                 >
                   {/* Simplified World Map SVG */}
                   <rect width="100" height="60" fill="hsl(var(--muted))" />
@@ -121,7 +122,7 @@ const MapSection = () => {
                   {/* Location Markers */}
                   {locations.map((location) => (
                     <g key={location.id}>
-                      {/* Connection Lines */}
+                      {/* Pulse Animation for Active Location */}
                       {activeLocation?.id === location.id && (
                         <circle
                           cx={location.coordinates.x}
@@ -177,60 +178,51 @@ const MapSection = () => {
               </div>
             </div>
 
-            {/* Location Details */}
-            <div className="lg:col-span-1 space-y-4">
-              {activeLocation && (
-                <Card className="bg-card border-border shadow-xl animate-fade-in">
+            {/* Right Column - Scrolling Location Details */}
+            <div className="space-y-6">
+              {locations.map((location) => (
+                <Card
+                  key={location.id}
+                  className={`cursor-pointer transition-all duration-300 ${
+                    activeLocation?.id === location.id
+                      ? "ring-2 ring-accent shadow-xl"
+                      : "hover:shadow-lg border-border"
+                  }`}
+                  onClick={() => setActiveLocation(location)}
+                >
                   <CardContent className="p-6 space-y-4">
                     <div className="flex items-start gap-3">
                       <MapPin className="text-accent mt-1 flex-shrink-0" size={24} />
-                      <div>
-                        <h3 className="font-playfair text-2xl font-bold text-primary">
-                          {activeLocation.name}
+                      <div className="flex-1">
+                        <h3 className="font-playfair text-3xl font-bold text-primary mb-1">
+                          {location.name}
                         </h3>
-                        <p className="font-lato text-sm text-muted-foreground">
-                          {activeLocation.country}
+                        <p className="font-lato text-sm text-muted-foreground mb-2">
+                          {location.country}
+                        </p>
+                        <p className="font-lato text-sm text-accent font-semibold">
+                          {location.period}
                         </p>
                       </div>
                     </div>
                     
-                    <div className="border-t border-border pt-4">
-                      <p className="font-lato text-sm text-accent font-semibold mb-2">
-                        Period: {activeLocation.period}
+                    <div className="border-t border-border pt-4 space-y-4">
+                      <p className="font-lato text-foreground leading-relaxed text-base">
+                        {location.description}
                       </p>
-                      <p className="font-lato text-foreground mb-4">
-                        {activeLocation.description}
-                      </p>
+                      
                       <div className="bg-secondary/50 rounded-lg p-4">
                         <h4 className="font-lato font-semibold text-sm uppercase tracking-wide text-primary mb-2">
                           Historical Significance
                         </h4>
                         <p className="font-lato text-sm text-foreground leading-relaxed">
-                          {activeLocation.significance}
+                          {location.significance}
                         </p>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
-              )}
-
-              {/* Location Quick Links */}
-              <div className="space-y-2">
-                {locations.map((location) => (
-                  <button
-                    key={location.id}
-                    onClick={() => setActiveLocation(location)}
-                    className={`w-full text-left px-4 py-3 rounded-lg font-lato text-sm transition-all ${
-                      activeLocation?.id === location.id
-                        ? "bg-accent text-accent-foreground shadow-md"
-                        : "bg-card text-foreground hover:bg-muted border border-border"
-                    }`}
-                  >
-                    <div className="font-semibold">{location.name}</div>
-                    <div className="text-xs opacity-75">{location.country}</div>
-                  </button>
-                ))}
-              </div>
+              ))}
             </div>
           </div>
         </div>
