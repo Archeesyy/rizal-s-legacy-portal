@@ -7,6 +7,7 @@ import MapSection from "@/components/MapSection";
 import GallerySection from "@/components/GallerySection";
 import TravelerSection from "@/components/TravelerSection";
 import QuizSection from "@/components/QuizSection";
+import LegacySection from "@/components/LegacySection";
 
 const Index = () => {
   return (
@@ -21,6 +22,7 @@ const Index = () => {
         <GallerySection />
         <TravelerSection />
         <QuizSection />
+        <LegacySection />
       </main>
       <footer className="bg-primary text-primary-foreground py-8">
         <div className="container mx-auto px-4 text-center">
