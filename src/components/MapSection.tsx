@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { MapPin } from "lucide-react";
+import { MapPin, Play, Pause } from "lucide-react";
 import { Card, CardContent } from "./ui/card";
+import { Slider } from "./ui/slider";
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -79,9 +80,24 @@ const locations: Location[] = [
 
 const MapSection = () => {
   const [activeLocation, setActiveLocation] = useState<Location | null>(locations[0]);
+  const [timelineYear, setTimelineYear] = useState(1861);
+  const [isPlaying, setIsPlaying] = useState(false);
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<L.Map | null>(null);
   const markers = useRef<L.Marker[]>([]);
+  const journeyLine = useRef<L.Polyline | null>(null);
+  const playInterval = useRef<NodeJS.Timeout | null>(null);
+
+  // Get the start year from a location's period string
+  const getStartYear = (period: string): number => {
+    const match = period.match(/(\d{4})/);
+    return match ? parseInt(match[1]) : 1861;
+  };
+
+  // Get visible locations based on timeline year
+  const getVisibleLocations = () => {
+    return locations.filter(loc => getStartYear(loc.period) <= timelineYear);
+  };
 
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
@@ -95,19 +111,8 @@ const MapSection = () => {
       maxZoom: 19,
     }).addTo(map.current);
 
-    // Journey path in chronological order
-    const journeyPath: L.LatLngExpression[] = [
-      [14.2113, 121.1535], // Calamba
-      [40.4168, -3.7038],  // Madrid
-      [49.3988, 8.6821],   // Heidelberg
-      [50.8503, 4.3517],   // Brussels
-      [14.5995, 120.9842], // Manila
-      [8.6497, 123.4181],  // Dapitan
-      [14.5995, 120.9842], // Back to Manila
-    ];
-
-    // Create animated polyline for the journey
-    const journeyLine = L.polyline(journeyPath, {
+    // Initialize empty polyline
+    journeyLine.current = L.polyline([], {
       color: 'hsl(var(--accent))',
       weight: 3,
       opacity: 0.7,
@@ -128,16 +133,45 @@ const MapSection = () => {
     };
     animatePath();
 
+    return () => {
+      markers.current.forEach(marker => marker.remove());
+      markers.current = [];
+      journeyLine.current?.remove();
+      map.current?.remove();
+      map.current = null;
+    };
+  }, []);
+
+  // Update markers and route based on timeline
+  useEffect(() => {
+    if (!map.current) return;
+
+    // Clear existing markers
+    markers.current.forEach(marker => marker.remove());
+    markers.current = [];
+
+    const visibleLocations = getVisibleLocations();
+    
+    // Journey path up to current timeline
+    const journeyPath: L.LatLngExpression[] = visibleLocations.map(loc => 
+      [loc.coordinates.lat, loc.coordinates.lng]
+    );
+
+    // Update polyline
+    if (journeyLine.current) {
+      journeyLine.current.setLatLngs(journeyPath);
+    }
+
     // Custom icon for markers
     const customIcon = L.divIcon({
       className: 'custom-marker',
-      html: '<div style="width: 30px; height: 30px; border-radius: 50%; background-color: hsl(var(--accent)); border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>',
+      html: '<div style="width: 30px; height: 30px; border-radius: 50%; background-color: hsl(var(--accent)); border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); transition: all 0.3s ease;"></div>',
       iconSize: [30, 30],
       iconAnchor: [15, 15],
     });
 
-    // Add markers for each location
-    locations.forEach((location, index) => {
+    // Add markers for visible locations
+    visibleLocations.forEach((location, index) => {
       const marker = L.marker([location.coordinates.lat, location.coordinates.lng], {
         icon: customIcon,
       }).addTo(map.current!);
@@ -164,13 +198,43 @@ const MapSection = () => {
       markers.current.push(marker);
     });
 
+    // Update active location to the most recent visible one
+    if (visibleLocations.length > 0) {
+      setActiveLocation(visibleLocations[visibleLocations.length - 1]);
+    }
+  }, [timelineYear]);
+
+  // Auto-play functionality
+  useEffect(() => {
+    if (isPlaying) {
+      playInterval.current = setInterval(() => {
+        setTimelineYear(prev => {
+          if (prev >= 1896) {
+            setIsPlaying(false);
+            return 1896;
+          }
+          return prev + 1;
+        });
+      }, 500);
+    } else {
+      if (playInterval.current) {
+        clearInterval(playInterval.current);
+      }
+    }
+
     return () => {
-      markers.current.forEach(marker => marker.remove());
-      markers.current = [];
-      map.current?.remove();
-      map.current = null;
+      if (playInterval.current) {
+        clearInterval(playInterval.current);
+      }
     };
-  }, []);
+  }, [isPlaying]);
+
+  const togglePlay = () => {
+    if (timelineYear >= 1896) {
+      setTimelineYear(1861);
+    }
+    setIsPlaying(!isPlaying);
+  };
 
   return (
     <section id="map" className="py-24 bg-background">
@@ -188,12 +252,60 @@ const MapSection = () => {
         <div className="max-w-7xl mx-auto">
           {/* Two Column Layout: Sticky Map + Scrolling Content */}
           <div className="grid md:grid-cols-2 gap-12 items-start">
-            {/* Left Column - Sticky Map */}
-            <div className="md:sticky md:top-24">
+            {/* Left Column - Sticky Map with Timeline */}
+            <div className="md:sticky md:top-24 space-y-4">
               <div 
                 ref={mapContainer} 
                 className="w-full h-[500px] rounded-lg shadow-xl border border-border overflow-hidden"
               />
+              
+              {/* Timeline Slider */}
+              <Card className="bg-card border-border p-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-playfair text-2xl font-bold text-primary">
+                      Journey Timeline
+                    </h3>
+                    <button
+                      onClick={togglePlay}
+                      className="flex items-center gap-2 px-4 py-2 bg-accent text-accent-foreground rounded-md hover:bg-accent/90 transition-colors"
+                    >
+                      {isPlaying ? (
+                        <>
+                          <Pause size={16} />
+                          <span className="font-lato text-sm">Pause</span>
+                        </>
+                      ) : (
+                        <>
+                          <Play size={16} />
+                          <span className="font-lato text-sm">Play</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="font-lato text-sm text-muted-foreground">1861</span>
+                      <span className="font-playfair text-3xl font-bold text-accent">{timelineYear}</span>
+                      <span className="font-lato text-sm text-muted-foreground">1896</span>
+                    </div>
+                    
+                    <Slider
+                      value={[timelineYear]}
+                      onValueChange={(value) => setTimelineYear(value[0])}
+                      min={1861}
+                      max={1896}
+                      step={1}
+                      className="w-full"
+                    />
+                    
+                    <p className="font-lato text-sm text-muted-foreground text-center mt-2">
+                      {getVisibleLocations().length} of {locations.length} locations visited
+                    </p>
+                  </div>
+                </div>
+              </Card>
             </div>
 
             {/* Right Column - Scrolling Location Details */}
