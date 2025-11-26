@@ -1,10 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { MapPin } from "lucide-react";
 import { Card, CardContent } from "./ui/card";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 interface Location {
   id: number;
@@ -81,55 +79,45 @@ const locations: Location[] = [
 
 const MapSection = () => {
   const [activeLocation, setActiveLocation] = useState<Location | null>(locations[0]);
-  const [mapboxToken, setMapboxToken] = useState<string>("");
-  const [showTokenInput, setShowTokenInput] = useState(true);
   const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
-  const markers = useRef<mapboxgl.Marker[]>([]);
+  const map = useRef<L.Map | null>(null);
+  const markers = useRef<L.Marker[]>([]);
 
   useEffect(() => {
-    if (!mapContainer.current || !mapboxToken || map.current) return;
+    if (!mapContainer.current || map.current) return;
 
-    mapboxgl.accessToken = mapboxToken;
-    
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/light-v11',
-      center: [30, 20],
-      zoom: 1.5,
+    // Initialize Leaflet map with OpenStreetMap
+    map.current = L.map(mapContainer.current).setView([20, 30], 2);
+
+    // Add OpenStreetMap tile layer (completely free, no API key needed)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 19,
+    }).addTo(map.current);
+
+    // Custom icon for markers
+    const customIcon = L.divIcon({
+      className: 'custom-marker',
+      html: '<div style="width: 30px; height: 30px; border-radius: 50%; background-color: hsl(var(--accent)); border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>',
+      iconSize: [30, 30],
+      iconAnchor: [15, 15],
     });
-
-    map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
     // Add markers for each location
     locations.forEach((location) => {
-      const el = document.createElement('div');
-      el.className = 'marker';
-      el.style.width = '30px';
-      el.style.height = '30px';
-      el.style.borderRadius = '50%';
-      el.style.backgroundColor = 'hsl(var(--accent))';
-      el.style.border = '3px solid white';
-      el.style.cursor = 'pointer';
-      el.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
+      const marker = L.marker([location.coordinates.lat, location.coordinates.lng], {
+        icon: customIcon,
+      }).addTo(map.current!);
 
-      const marker = new mapboxgl.Marker(el)
-        .setLngLat([location.coordinates.lng, location.coordinates.lat])
-        .addTo(map.current!);
-
-      el.addEventListener('click', () => {
+      marker.on('click', () => {
         setActiveLocation(location);
-        map.current?.flyTo({
-          center: [location.coordinates.lng, location.coordinates.lat],
-          zoom: 6,
-          duration: 2000,
+        map.current?.flyTo([location.coordinates.lat, location.coordinates.lng], 6, {
+          duration: 2,
         });
       });
 
       markers.current.push(marker);
     });
-
-    setShowTokenInput(false);
 
     return () => {
       markers.current.forEach(marker => marker.remove());
@@ -137,14 +125,7 @@ const MapSection = () => {
       map.current?.remove();
       map.current = null;
     };
-  }, [mapboxToken]);
-
-  const handleTokenSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (mapboxToken.trim()) {
-      setShowTokenInput(false);
-    }
-  };
+  }, []);
 
   return (
     <section id="map" className="py-24 bg-background">
@@ -164,47 +145,10 @@ const MapSection = () => {
           <div className="grid md:grid-cols-2 gap-12 items-start">
             {/* Left Column - Sticky Map */}
             <div className="md:sticky md:top-24">
-              {showTokenInput ? (
-                <Card className="bg-card border-border p-6">
-                  <form onSubmit={handleTokenSubmit} className="space-y-4">
-                    <div>
-                      <Label htmlFor="mapbox-token" className="font-lato text-foreground">
-                        Enter Your Mapbox Public Token
-                      </Label>
-                      <p className="text-sm text-muted-foreground mt-1 mb-3">
-                        Get your free token at{" "}
-                        <a 
-                          href="https://account.mapbox.com/access-tokens/" 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-accent hover:underline"
-                        >
-                          mapbox.com
-                        </a>
-                      </p>
-                      <Input
-                        id="mapbox-token"
-                        type="text"
-                        value={mapboxToken}
-                        onChange={(e) => setMapboxToken(e.target.value)}
-                        placeholder="pk.eyJ1..."
-                        className="font-mono text-sm"
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      className="w-full bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-accent transition-colors font-lato"
-                    >
-                      Load Interactive Map
-                    </button>
-                  </form>
-                </Card>
-              ) : (
-                <div 
-                  ref={mapContainer} 
-                  className="w-full h-[500px] rounded-lg shadow-xl border border-border overflow-hidden"
-                />
-              )}
+              <div 
+                ref={mapContainer} 
+                className="w-full h-[500px] rounded-lg shadow-xl border border-border overflow-hidden"
+              />
             </div>
 
             {/* Right Column - Scrolling Location Details */}
