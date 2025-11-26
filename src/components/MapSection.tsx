@@ -95,6 +95,39 @@ const MapSection = () => {
       maxZoom: 19,
     }).addTo(map.current);
 
+    // Journey path in chronological order
+    const journeyPath: L.LatLngExpression[] = [
+      [14.2113, 121.1535], // Calamba
+      [40.4168, -3.7038],  // Madrid
+      [49.3988, 8.6821],   // Heidelberg
+      [50.8503, 4.3517],   // Brussels
+      [14.5995, 120.9842], // Manila
+      [8.6497, 123.4181],  // Dapitan
+      [14.5995, 120.9842], // Back to Manila
+    ];
+
+    // Create animated polyline for the journey
+    const journeyLine = L.polyline(journeyPath, {
+      color: 'hsl(var(--accent))',
+      weight: 3,
+      opacity: 0.7,
+      dashArray: '10, 10',
+      className: 'journey-path',
+    }).addTo(map.current);
+
+    // Animate the path
+    let offset = 0;
+    const animatePath = () => {
+      offset += 1;
+      if (offset > 20) offset = 0;
+      const line = document.querySelector('.journey-path') as HTMLElement;
+      if (line) {
+        line.style.strokeDashoffset = offset.toString();
+      }
+      requestAnimationFrame(animatePath);
+    };
+    animatePath();
+
     // Custom icon for markers
     const customIcon = L.divIcon({
       className: 'custom-marker',
@@ -104,9 +137,21 @@ const MapSection = () => {
     });
 
     // Add markers for each location
-    locations.forEach((location) => {
+    locations.forEach((location, index) => {
       const marker = L.marker([location.coordinates.lat, location.coordinates.lng], {
         icon: customIcon,
+      }).addTo(map.current!);
+
+      // Add number labels
+      const numberLabel = L.divIcon({
+        className: 'location-number',
+        html: `<div style="width: 20px; height: 20px; border-radius: 50%; background-color: hsl(var(--primary)); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">${index + 1}</div>`,
+        iconSize: [20, 20],
+        iconAnchor: [10, 30],
+      });
+
+      L.marker([location.coordinates.lat, location.coordinates.lng], {
+        icon: numberLabel,
       }).addTo(map.current!);
 
       marker.on('click', () => {
