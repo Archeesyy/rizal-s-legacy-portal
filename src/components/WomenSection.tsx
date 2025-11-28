@@ -3,7 +3,11 @@ import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import segundaImage from "@/assets/segunda-katigbak.jpg";
+import valenzuelaImage from "@/assets/leonor-valenzuela.jpg";
 import leonorImage from "@/assets/leonor-rivera.jpg";
+import consueloImage from "@/assets/consuelo-ortiga.jpg";
+import oSeiSanImage from "@/assets/o-sei-san.jpg";
+import gertrudeImage from "@/assets/gertrude-beckett.jpg";
 import josephineImage from "@/assets/josephine-bracken.jpg";
 
 interface Woman {
@@ -23,7 +27,7 @@ const women: Woman[] = [
   },
   {
     name: "Leonor Valenzuela",
-    image: segundaImage,
+    image: valenzuelaImage,
     relationship: "Orang (1878-1880)",
     description:
       "A talented young woman nicknamed 'Orang' whom Rizal courted while studying at the University of Santo Tomas. She was the niece of his landlady in Intramuros, and their relationship was characterized by youthful affection and shared literary interests during his university days.",
@@ -37,21 +41,21 @@ const women: Woman[] = [
   },
   {
     name: "Consuelo Ortiga y Perez",
-    image: leonorImage,
+    image: consueloImage,
     relationship: "Parisian Romance (1883)",
     description:
       "The beautiful daughter of Don Pablo Ortiga y Rey, who gave Rizal hospitality in Madrid. Rizal fell deeply in love with Consuelo and even contemplated proposing, but his sense of duty to his country and financial limitations prevented him from pursuing marriage.",
   },
   {
     name: "O Sei San",
-    image: josephineImage,
+    image: oSeiSanImage,
     relationship: "Japanese Romance (1888)",
     description:
       "A Japanese woman Rizal met during his month-long stay in Japan. Their brief but profound romance is considered one of the most romantic episodes in Rizal's life. O Sei San's gentle nature and Japanese culture deeply impressed Rizal, and their parting was filled with mutual sadness.",
   },
   {
     name: "Gertrude Beckett",
-    image: josephineImage,
+    image: gertrudeImage,
     relationship: "London Admirer (1888-1889)",
     description:
       "The eldest daughter of Rizal's landlord in London, Gertrude fell in love with him during his stay. Though Rizal was fond of her, he could not reciprocate her feelings as he was still devoted to Leonor Rivera. Gertrude's love remained unrequited, and she never married.",
