@@ -257,6 +257,7 @@ const MapSection = () => {
               <div 
                 ref={mapContainer} 
                 className="w-full h-[500px] rounded-lg shadow-xl border border-border overflow-hidden"
+                style={{ filter: "sepia(85%) contrast(90%) opacity(0.9)" }}
               />
               
               {/* Timeline Slider */}
@@ -321,16 +322,16 @@ const MapSection = () => {
                   onClick={() => setActiveLocation(location)}
                 >
                   <CardContent className="p-6 space-y-4">
-                    <div className="flex items-start gap-3">
-                      <MapPin className="text-accent mt-1 flex-shrink-0" size={24} />
+                    <div className="flex items-start gap-3 bg-mahogany rounded-t-lg -m-6 mb-4 p-6">
+                      <MapPin className="text-gold mt-1 flex-shrink-0" size={24} />
                       <div className="flex-1">
-                        <h3 className="font-playfair text-3xl font-bold text-primary mb-1">
+                        <h3 className="font-playfair text-3xl font-bold text-primary-foreground mb-1">
                           {location.name}
                         </h3>
-                        <p className="font-lato text-sm text-muted-foreground mb-2">
+                        <p className="font-lato text-sm text-primary-foreground/80 mb-2">
                           {location.country}
                         </p>
-                        <p className="font-lato text-sm text-accent font-semibold">
+                        <p className="font-lato text-sm text-gold font-semibold">
                           {location.period}
                         </p>
                       </div>

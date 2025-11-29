@@ -155,12 +155,12 @@ const QuizSection = () => {
                   disabled={showResult}
                   className={`w-full p-4 text-left rounded-lg border-2 transition-all font-lato ${
                     showCorrect
-                      ? "border-green-500 bg-green-50"
+                      ? "border-green-500 bg-green-50 dark:bg-green-900/20"
                       : showIncorrect
-                      ? "border-red-500 bg-red-50"
+                      ? "border-red-500 bg-red-50 dark:bg-red-900/20"
                       : isSelected
-                      ? "border-accent bg-accent/10"
-                      : "border-border bg-background hover:border-accent/50"
+                      ? "border-accent bg-accent/10 shadow-md"
+                      : "border-border bg-card hover:border-gold hover:bg-parchment-dark hover:shadow-lg transform hover:-translate-y-1"
                   } ${showResult ? "cursor-not-allowed" : "cursor-pointer"}`}
                 >
                   <div className="flex items-center justify-between">
