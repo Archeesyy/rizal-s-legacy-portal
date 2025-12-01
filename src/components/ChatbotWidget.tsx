@@ -71,7 +71,8 @@ function getRizalResponse(userText: string): string {
   }
 
   // DEFAULT ANSWER (If the bot doesn't know)
-  return "That is an interesting question. I do not have that specific detail in my memory yet. Try asking about my 'Novels', 'Family', 'Travels', or 'Execution'.";
+  const searchQuery = encodeURIComponent(userText);
+  return `I apologize, I do not have that specific record in my offline memory. However, since you are asking about "${userText}", would you like to search for it?\n\n[GOOGLE_SEARCH:${searchQuery}]`;
 }
 
 const ChatbotWidget = () => {
@@ -84,12 +85,16 @@ const ChatbotWidget = () => {
     },
   ]);
   const [inputValue, setInputValue] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const suggestedQuestions = [
     "Who is Josephine?",
     "Summary of Noli",
     "Where did you study?",
+    "Tell me about your execution",
+    "What languages did you speak?",
+    "Who were your parents?",
   ];
 
   const scrollToBottom = () => {
@@ -110,16 +115,19 @@ const ChatbotWidget = () => {
       timestamp: new Date(),
     };
     setMessages((prev) => [...prev, userMessage]);
+    setIsTyping(true);
 
-    // Get bot response
+    // Get bot response with typing indicator
     setTimeout(() => {
+      const responseText = getRizalResponse(text);
       const botResponse: Message = {
-        text: getRizalResponse(text),
+        text: responseText,
         sender: "bot",
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, botResponse]);
-    }, 500);
+      setIsTyping(false);
+    }, 800);
 
     setInputValue("");
   };
@@ -154,24 +162,50 @@ const ChatbotWidget = () => {
           {/* Messages Area */}
           <ScrollArea className="flex-1 p-4 bg-parchment custom-scrollbar">
             <div className="space-y-3">
-              {messages.map((message, index) => (
-                <div
-                  key={index}
-                  className={`flex ${
-                    message.sender === "user" ? "justify-end" : "justify-start"
-                  }`}
-                >
+              {messages.map((message, index) => {
+                const hasSearchButton = message.text.includes("[GOOGLE_SEARCH:");
+                const searchMatch = message.text.match(/\[GOOGLE_SEARCH:(.*?)\]/);
+                const displayText = message.text.replace(/\[GOOGLE_SEARCH:.*?\]/, "").trim();
+                
+                return (
                   <div
-                    className={`max-w-[80%] p-3 rounded-lg ${
-                      message.sender === "user"
-                        ? "bg-mahogany text-primary-foreground"
-                        : "bg-card border border-border"
+                    key={index}
+                    className={`flex ${
+                      message.sender === "user" ? "justify-end" : "justify-start"
                     }`}
                   >
-                    <p className="text-sm">{message.text}</p>
+                    <div
+                      className={`max-w-[80%] p-3 rounded-lg ${
+                        message.sender === "user"
+                          ? "bg-mahogany text-primary-foreground"
+                          : "bg-card border border-border"
+                      }`}
+                    >
+                      <p className="text-sm whitespace-pre-line">{displayText}</p>
+                      {hasSearchButton && searchMatch && (
+                        <Button
+                          onClick={() => window.open(`https://www.google.com/search?q=Jose+Rizal+${searchMatch[1]}`, "_blank")}
+                          className="mt-2 bg-mahogany hover:bg-mahogany-light text-primary-foreground text-xs"
+                          size="sm"
+                        >
+                          Search Google
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+              {isTyping && (
+                <div className="flex justify-start">
+                  <div className="bg-card border border-border p-3 rounded-lg">
+                    <div className="flex gap-1">
+                      <span className="w-2 h-2 bg-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></span>
+                      <span className="w-2 h-2 bg-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></span>
+                      <span className="w-2 h-2 bg-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></span>
+                    </div>
                   </div>
                 </div>
-              ))}
+              )}
               <div ref={messagesEndRef} />
             </div>
           </ScrollArea>
