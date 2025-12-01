@@ -9,6 +9,7 @@ import GallerySection from "@/components/GallerySection";
 import TravelerSection from "@/components/TravelerSection";
 import QuizSection from "@/components/QuizSection";
 import LegacySection from "@/components/LegacySection";
+import ChatbotWidget from "@/components/ChatbotWidget";
 import { usePresentationMode } from "@/contexts/PresentationContext";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
@@ -63,6 +64,9 @@ const Index = () => {
           </div>
         </footer>
       )}
+      
+      {/* Chatbot Widget */}
+      {!isPresentationMode && <ChatbotWidget />}
     </div>
   );
 };
