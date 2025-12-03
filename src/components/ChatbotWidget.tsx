@@ -45,7 +45,7 @@ function getRizalResponse(userText: string): string {
 
   // 3. LITERARY WORKS
   if (input.includes("noli") || input.includes("tangere")) {
-    return "Noli Me Tangere (Touch Me Not) was published in Berlin in 1887. It exposed the cancer of society and the abuses of the friars. It was a romantic novel.";
+    return "Noli Me Tangere (Touch Me Not) was published in Berlin in 1887. It exposed the cancer of society and the abuses of the friars. It is a social novel diagnosing the ills of colonial Philippines.";
   }
   if (input.includes("fili") || input.includes("filibusterismo")) {
     return "El Filibusterismo (The Reign of Greed) was published in Ghent in 1891. It is a political novel, darker than the Noli, and dedicated to the martyred priests Gomburza.";
@@ -56,18 +56,68 @@ function getRizalResponse(userText: string): string {
 
   // 4. EDUCATION & TRAVELS
   if (input.includes("education") || input.includes("study") || input.includes("school")) {
-    return "I began in Biñan, then studied at Ateneo Municipal (Bachelor of Arts) and UST (Medicine). Disgusted by the method of instruction at UST, I continued my studies in Spain.";
+    return "I studied at Ateneo Municipal (Bachelor of Arts) where I excelled and was called 'Emperor'. At UST, I faced discrimination ('Indio Chongo'). Disgusted, I continued in Spain.";
   }
   if (input.includes("profession") || input.includes("job") || input.includes("doctor")) {
     return "I was an ophthalmologist by profession, but also a farmer, engineer, journalist, novelist, sculptor, and linguist. I spoke 22 languages.";
   }
+  if (input.includes("language") || input.includes("spoke")) {
+    return "I was proficient in 22 languages including Tagalog, Spanish, German, French, Latin, Greek, Hebrew, Sanskrit, Japanese, and more.";
+  }
 
   // 5. DEATH & LEGACY
   if (input.includes("death") || input.includes("died") || input.includes("execution")) {
-    return "I was executed by firing squad at Bagumbayan (now Rizal Park) on December 29, 1896, at 7:03 AM. My pulse was normal, proving I was not afraid to die.";
+    return "I was executed by firing squad at Bagumbayan (now Rizal Park) on December 29, 1896, at 7:03 AM. My pulse was normal, proving I was not afraid to die. I turned my body to face the squad but was shot in the back.";
   }
   if (input.includes("retraction")) {
     return "The issue of whether I retracted my Masonic beliefs remains a controversial topic among historians to this day. I leave that to your judgment.";
+  }
+
+  // 6. NEW: GOMBURZA & Historical Context
+  if (input.includes("gomburza") || input.includes("gom bur za")) {
+    return "GOMBURZA refers to the three Filipino priests — Mariano Gómez, José Burgos, and Jacinto Zamora — who were publicly garroted on February 17, 1872, falsely accused of leading the Cavite Mutiny. Their martyrdom awakened my national consciousness.";
+  }
+  if (input.includes("cavite mutiny")) {
+    return "The Cavite Mutiny of 1872 was a brief uprising of 200 Filipino soldiers at the Cavite arsenal. Governor Izquierdo used it as a pretext to eliminate Filipino reformists, leading to the execution of GOMBURZA.";
+  }
+
+  // 7. NEW: Characters from the Novels
+  if (input.includes("sisa")) {
+    return "Sisa is a tragic character from Noli Me Tangere. She represents the suffering Filipino mother — driven to madness after losing her sons Basilio and Crispín to the abuses of the friars. She symbolizes how colonial oppression destroys families.";
+  }
+  if (input.includes("ibarra") || input.includes("crisostomo")) {
+    return "Crisóstomo Ibarra is the protagonist of Noli Me Tangere. He represents the idealistic Filipino reformist who believes in peaceful change. In El Filibusterismo, he returns as the bitter revolutionary Simoun.";
+  }
+  if (input.includes("maria clara")) {
+    return "María Clara is the female lead of Noli Me Tangere, inspired by my sweetheart Leonor Rivera. She represents the idealized Filipina trapped by colonial and religious constraints, eventually choosing a convent over a life with Ibarra.";
+  }
+  if (input.includes("damaso") || input.includes("padre damaso")) {
+    return "Padre Dámaso is the main antagonist of Noli Me Tangere. He is a corrupt Spanish friar who represents the abuses of the Catholic Church — arrogance, racism, and exploitation. He is secretly María Clara's biological father.";
+  }
+  if (input.includes("elias")) {
+    return "Elías is a revolutionary character in Noli Me Tangere. Unlike Ibarra, he believes reform is impossible and armed struggle is necessary. His death foreshadows the coming Philippine Revolution.";
+  }
+  if (input.includes("simoun")) {
+    return "Simoun is Ibarra's alter-ego in El Filibusterismo — a wealthy jeweler plotting violent revolution. He represents the Filipino driven to extremism after peaceful reforms failed.";
+  }
+
+  // 8. NEW: La Liga, Propaganda Movement
+  if (input.includes("la liga") || input.includes("liga filipina")) {
+    return "La Liga Filipina was the organization I founded on July 3, 1892, in Manila. Its motto was 'Unus Instar Omnium' (One Like All). Its aims: unite the archipelago, mutual protection, and defense against injustice. I was arrested 4 days later.";
+  }
+  if (input.includes("propaganda") || input.includes("solidaridad")) {
+    return "La Solidaridad (1889-1895) was the newspaper of the Propaganda Movement. I, along with Marcelo H. del Pilar and Graciano López Jaena, wrote to advocate for reforms: Philippine representation in the Spanish Cortes, freedom of speech, and secularization of parishes.";
+  }
+  if (input.includes("del pilar") || input.includes("plaridel")) {
+    return "Marcelo H. del Pilar (pen name: Plaridel) was a fellow propagandist and editor of La Solidaridad. He was a master satirist who wrote 'Dasalan at Tocsohan' to mock the friars.";
+  }
+  if (input.includes("blumentritt")) {
+    return "Ferdinand Blumentritt was an Austrian professor and ethnographer who became my closest European friend. We exchanged hundreds of letters discussing Philippine history and culture.";
+  }
+
+  // 9. NEW: Rizal Law
+  if (input.includes("rizal law") || input.includes("ra 1425")) {
+    return "Republic Act 1425, the Rizal Law, was signed on June 12, 1956. It mandates the study of my life and works in all Philippine schools. There was controversy with the Catholic Church, but a compromise allowed religious exemptions for reading expurgated versions.";
   }
 
   // DEFAULT ANSWER (If the bot doesn't know)
