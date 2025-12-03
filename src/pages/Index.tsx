@@ -1,30 +1,49 @@
-import Navigation from "@/components/Navigation";
+import { useState } from "react";
+import TabNavigation from "@/components/TabNavigation";
 import ReadingProgressBar from "@/components/ReadingProgressBar";
-import HeroSection from "@/components/HeroSection";
-import TimelineSection from "@/components/TimelineSection";
-import LibrarySection from "@/components/LibrarySection";
-import WomenSection from "@/components/WomenSection";
-import MapSection from "@/components/MapSection";
-import GallerySection from "@/components/GallerySection";
-import TravelerSection from "@/components/TravelerSection";
-import QuizSection from "@/components/QuizSection";
-import LegacySection from "@/components/LegacySection";
+import HomeSection from "@/components/sections/HomeSection";
+import ContextSection from "@/components/sections/ContextSection";
+import BiographySection from "@/components/sections/BiographySection";
+import PropagandaSection from "@/components/sections/PropagandaSection";
+import LiterarySection from "@/components/sections/LiterarySection";
+import RizalLawSection from "@/components/sections/RizalLawSection";
 import ChatbotWidget from "@/components/ChatbotWidget";
 import { usePresentationMode } from "@/contexts/PresentationContext";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
 const Index = () => {
+  const [activeTab, setActiveTab] = useState("home");
   const { isPresentationMode, togglePresentationMode } = usePresentationMode();
+
+  const renderSection = () => {
+    switch (activeTab) {
+      case "home":
+        return <HomeSection onNavigate={setActiveTab} />;
+      case "context":
+        return <ContextSection />;
+      case "biography":
+        return <BiographySection />;
+      case "propaganda":
+        return <PropagandaSection />;
+      case "library":
+        return <LiterarySection />;
+      case "rizal-law":
+        return <RizalLawSection />;
+      default:
+        return <HomeSection onNavigate={setActiveTab} />;
+    }
+  };
 
   return (
     <div 
       className={`min-h-screen bg-background font-lato transition-all ${
-        isPresentationMode ? "text-[120%]" : ""
+        isPresentationMode ? "text-[120%] cursor-crosshair" : ""
       }`}
+      style={isPresentationMode ? { cursor: "url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 20 20\"><circle cx=\"10\" cy=\"10\" r=\"8\" fill=\"red\" opacity=\"0.8\"/><circle cx=\"10\" cy=\"10\" r=\"3\" fill=\"white\"/></svg>') 10 10, crosshair" } : {}}
     >
       <ReadingProgressBar />
-      <Navigation />
+      <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
       
       {/* Exit Presentation Mode Button */}
       {isPresentationMode && (
@@ -38,17 +57,10 @@ const Index = () => {
         </Button>
       )}
       
-      <main>
-        <HeroSection />
-        <TimelineSection />
-        <LibrarySection />
-        <WomenSection />
-        <MapSection />
-        <GallerySection />
-        <TravelerSection />
-        <QuizSection />
-        <LegacySection />
+      <main className={isPresentationMode ? "" : "pt-16"}>
+        {renderSection()}
       </main>
+
       {!isPresentationMode && (
         <footer className="bg-primary text-primary-foreground py-8">
           <div className="container mx-auto px-4 text-center">
