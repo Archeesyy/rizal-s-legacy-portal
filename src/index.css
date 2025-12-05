@@ -200,3 +200,41 @@ All colors MUST be HSL.
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+/* Flame flicker animation */
+@keyframes flicker {
+  0%, 100% { 
+    transform: scaleY(1) scaleX(1); 
+    opacity: 1;
+  }
+  25% { 
+    transform: scaleY(1.03) scaleX(0.97); 
+    opacity: 0.95;
+  }
+  50% { 
+    transform: scaleY(0.97) scaleX(1.02); 
+    opacity: 0.98;
+  }
+  75% { 
+    transform: scaleY(1.02) scaleX(0.98); 
+    opacity: 0.96;
+  }
+}
+
+.animate-flicker {
+  animation: flicker 0.3s ease-in-out infinite;
+}
+
+/* Quiz medal animation */
+@keyframes medal-glow {
+  0%, 100% { 
+    filter: drop-shadow(0 0 10px hsl(43 80% 55% / 0.5));
+  }
+  50% { 
+    filter: drop-shadow(0 0 25px hsl(43 80% 55% / 0.8));
+  }
+}
+
+.animate-medal-glow {
+  animation: medal-glow 2s ease-in-out infinite;
+}

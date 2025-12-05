@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, Suspense } from "react";
-import { Menu, X, BookOpen, Presentation, FileText } from "lucide-react";
+import { Menu, X, BookOpen, Presentation, FileText, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePresentationMode } from "@/contexts/PresentationContext";
 import CheatSheetModal from "@/components/CheatSheetModal";
@@ -8,7 +8,10 @@ import ScrollSection from "@/components/ScrollSection";
 import ParallaxElement from "@/components/ParallaxElement";
 import FlipCard3D from "@/components/FlipCard3D";
 import CastaPyramid from "@/components/CastaPyramid";
-import InteractiveGlobe from "@/components/InteractiveGlobe";
+import RealisticGlobe from "@/components/RealisticGlobe";
+import AudioPlayer from "@/components/AudioPlayer";
+import QuizChallenge from "@/components/QuizChallenge";
+import VirtualArtifact from "@/components/VirtualArtifact";
 
 // Import images
 import heroImage from "@/assets/hero-rizal.jpg";
@@ -25,6 +28,7 @@ import filiImg from "@/assets/el-filibusterismo.jpg";
 const ScrollytellingPage = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cheatSheetOpen, setCheatSheetOpen] = useState(false);
+  const [quizOpen, setQuizOpen] = useState(false);
   const { isPresentationMode, togglePresentationMode } = usePresentationMode();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
@@ -53,6 +57,7 @@ const ScrollytellingPage = () => {
     { id: "propaganda", label: "Propaganda" },
     { id: "works", label: "Works" },
     { id: "rizal-law", label: "RA 1425" },
+    { id: "artifact", label: "Artifact" },
   ];
 
   const womenData = [
@@ -108,6 +113,15 @@ const ScrollytellingPage = () => {
               <Button
                 variant="ghost"
                 size="sm"
+                onClick={() => setQuizOpen(true)}
+                className="hidden sm:flex"
+              >
+                <Trophy size={16} className="mr-1" />
+                Quiz
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => setCheatSheetOpen(true)}
                 className="hidden sm:flex"
               >
@@ -147,7 +161,10 @@ const ScrollytellingPage = () => {
                     {item.label}
                   </button>
                 ))}
-                <div className="flex gap-2 pt-2 border-t border-border">
+                <div className="flex flex-wrap gap-2 pt-2 border-t border-border">
+                  <Button size="sm" variant="outline" onClick={() => setQuizOpen(true)}>
+                    <Trophy size={14} className="mr-1" /> Quiz
+                  </Button>
                   <Button size="sm" variant="outline" onClick={() => setCheatSheetOpen(true)}>
                     <FileText size={14} className="mr-1" /> Review
                   </Button>
@@ -304,21 +321,21 @@ const ScrollytellingPage = () => {
         </div>
       </ScrollSection>
 
-      {/* SECTION 5: TRAVELS - 3D GLOBE */}
+      {/* SECTION 5: TRAVELS - 3D REALISTIC GLOBE */}
       <ScrollSection id="travels" background="accent">
         <div className="container mx-auto px-4 py-20">
           <h2 className="font-playfair text-4xl md:text-5xl font-bold text-gold text-center mb-4">
-            Rizal's Travels
+            Rizal's Global Journey
           </h2>
           <p className="font-lato text-center text-primary-foreground/80 mb-8">
-            From Calamba to the capitals of Europe. Click on the hotspots to explore.
+            Drag to rotate the globe • Click markers for travel details
           </p>
           <Suspense fallback={
-            <div className="w-full h-[500px] flex items-center justify-center">
-              <div className="text-gold animate-pulse">Loading 3D Globe...</div>
+            <div className="w-full h-[550px] flex items-center justify-center bg-black/50 rounded-xl">
+              <div className="text-gold animate-pulse text-lg">Loading 3D Earth...</div>
             </div>
           }>
-            <InteractiveGlobe />
+            <RealisticGlobe />
           </Suspense>
         </div>
       </ScrollSection>
@@ -458,9 +475,28 @@ const ScrollytellingPage = () => {
         </div>
       </ScrollSection>
 
+      {/* SECTION 9: VIRTUAL ARTIFACT */}
+      <ScrollSection id="artifact" background="primary">
+        <div className="container mx-auto px-4 py-20">
+          <h2 className="font-playfair text-4xl md:text-5xl font-bold text-primary text-center mb-4">
+            Virtual Artifact
+          </h2>
+          <p className="font-lato text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
+            Explore a 3D recreation of the historic artifact that concealed Rizal's final masterpiece.
+          </p>
+          <VirtualArtifact className="max-w-md mx-auto" />
+        </div>
+      </ScrollSection>
+
       {/* Modals & Widgets */}
       <CheatSheetModal open={cheatSheetOpen} onOpenChange={setCheatSheetOpen} />
-      {!isPresentationMode && <ChatbotWidget />}
+      <QuizChallenge open={quizOpen} onOpenChange={setQuizOpen} />
+      {!isPresentationMode && (
+        <>
+          <ChatbotWidget />
+          <AudioPlayer />
+        </>
+      )}
     </div>
   );
 };
