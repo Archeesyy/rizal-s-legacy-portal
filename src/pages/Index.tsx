@@ -1,7 +1,7 @@
-import ScrollytellingPage from "./ScrollytellingPage";
+import VirtualLegacyPage from "./VirtualLegacyPage";
 
 const Index = () => {
-  return <ScrollytellingPage />;
+  return <VirtualLegacyPage />;
 };
 
 export default Index;

@@ -238,3 +238,43 @@ All colors MUST be HSL.
 .animate-medal-glow {
   animation: medal-glow 2s ease-in-out infinite;
 }
+
+/* Page transition animations */
+@keyframes room-enter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes room-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+.animate-room-enter {
+  animation: room-enter 0.4s ease-out forwards;
+}
+
+.animate-room-exit {
+  animation: room-exit 0.3s ease-in forwards;
+}
+
+/* 3D rotation effects */
+.rotate-y-6 {
+  transform: perspective(1000px) rotateY(6deg);
+}
+
+.-rotate-y-6 {
+  transform: perspective(1000px) rotateY(-6deg);
+}
